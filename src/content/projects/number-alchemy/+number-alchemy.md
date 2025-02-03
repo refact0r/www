@@ -7,6 +7,7 @@ images: [screen1.png, screen2.png, screen3.png]
 aspect_ratio: tall 
 github: https://github.com/refact0r/number-alchemy
 website: https://play.google.com/store/apps/details?id=com.refact0r.number_alchemy
+date: 2022-07-02
 ---
 
 Number Alchemy is a math game about combining numbers. It is based on the [24 puzzle](https://en.wikipedia.org/wiki/24_(puzzle)) that I would play with my family growing up. The goal is to combine four numbers using the basic arithmetic operations to get 24. The game provides both a casual mode and a timed challenge mode. It also includes a tutorial, high scores, and haptics and theme settings. The game is designed to be intuitive but fun, with a clean and minimal interface.

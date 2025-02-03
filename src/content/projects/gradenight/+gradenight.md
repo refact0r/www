@@ -6,6 +6,7 @@ thumbnail: gradenight.png
 images: [gradenight.png, gradenight1.png, gradenight2.png]
 github: https://github.com/refact0r/gradenight
 website: https://gradenight.netlify.app
+date: 2022-01-05
 ---
 
 Gradenight was born out of frustration with the clunky, slow StudentVUE website that my school uses to track students' grades. I wanted to create a grades web app that would be easy to use and more visually appealing.

@@ -6,6 +6,7 @@ thumbnail: respir.png
 images: [respir.png, respir2.png, respir3.png, respir4.png]
 github: https://github.com/refact0r/respir
 website: https://respir.netlify.app
+date: 2024-01-12
 ---
 
 Respir is a web app that provides guided breathing exercises with visual and audio cues. It offers 3 preset breathing exercises and a breath holding test, but users can also create custom breathing exercises using their own timings. Custom exercises are saved locally and can be exported and imported as JSON data.

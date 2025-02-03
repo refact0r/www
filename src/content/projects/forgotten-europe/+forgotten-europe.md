@@ -4,8 +4,9 @@ name: forgotten europe
 description: website for the forgotten europe project
 thumbnail: fep.png
 images: [fep2.png]
-github: https://github.com/refact0r/forgotten-europe-project
+github: https://github.com/refact0r/forgotten-europe-website
 website: https://forgotteneurope.org
+date: 2022-07-06
 ---
 
 The Forgotten Europe Project is a nonprofit that aims to enlighten the world with the stories, traditions, and history of Central-Eastern Europe that are omitted from mainstream education. It was created by my friend Liam Krol in 2022. The project needed a website to better convey their mission to the world and to host content they produced, and I was happy to help.

@@ -6,6 +6,7 @@ thumbnail: papercut.png
 images: [papercut.png, papercut1.png, papercut2.png]
 github: https://github.com/refact0r/papercut
 website: https://papercut-nu.netlify.app
+date: 2024-03-02
 ---
 
 Finding relevant sources to an investigation is a repetitive and surprisingly difficult task. Titles of research papers are often not truly indicative of the content, leading to missed gold and false prophets. Papercut is a web app designed to help find academic sources in a more streamlined manner. Specifically, it is a search engine for arXiv that provides AI-generated summaries of papers. Relevant sources can be saved to a list for later reference.

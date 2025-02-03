@@ -6,6 +6,7 @@ thumbnail: midnight.png
 images: [midnight2.png, midnight-ctp.png, midnight-vc.png, midnight.png]
 github: https://github.com/refact0r/midnight-discord
 website: https://betterdiscord.app/theme/midnight
+date: 2021-10-02
 ---
 
 <script>
