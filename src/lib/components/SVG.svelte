@@ -18,7 +18,7 @@
 	{/await}
 </div>
 
-<style lang="scss">
+<style>
 	:global(.svg-container svg) {
 		width: 100%;
 		height: 100%;

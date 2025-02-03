@@ -11,7 +11,7 @@ ogImage: 'og-image.png'
     import Image from '$lib/components/Image.svelte';
 </script>
 
-<style lang="scss">
+<style>
     figure {
         margin: 1.5rem 0;
     }
@@ -197,7 +197,7 @@ And this is the actual image component `Image.svelte`:
             src={src.img.src}
             {alt}
             {loading}
-            onload="this.style.opacity=1"
+   on:load={(e) => (e.target.style.opacity = 1)}
             width={src.img.w}
             height={src.img.h}
         />
@@ -259,7 +259,7 @@ will generate the following HTML:
         src="/@imagetools/fd74dd053b2780680a1011c3316a12f93316e8de" 
         alt="the first version of midnight discord" 
         loading="lazy" 
-        onload="this.style.opacity=1" 
+        on:load={(e) => (e.target.style.opacity = 1)}
         width="2400" 
         height="1347" 
         class="s-wHckl4XSACcy" 

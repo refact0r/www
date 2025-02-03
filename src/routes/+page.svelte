@@ -48,17 +48,19 @@
 	</div>
 </main>
 
-<style lang="scss">
+<style>
 	main {
-		@include flex(row, center, center);
-
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		height: 100%;
 		max-height: calc(100vh - 12rem);
 		margin: 0 1.5rem;
 	}
 
 	.row {
-		@include flex(row, null, center);
+		display: flex;
+		align-items: center;
 		gap: 2rem;
 	}
 

@@ -29,14 +29,14 @@
 			src={src.img.src}
 			{alt}
 			{loading}
-			onload="this.style.opacity=1"
 			width={src.img.w}
 			height={src.img.h}
+			on:load={(e) => (e.target.style.opacity = 1)}
 		/>
 	{/await}
 </picture>
 
-<style lang="scss">
+<style>
 	picture {
 		aspect-ratio: var(--aspect-ratio, auto);
 	}

@@ -9,10 +9,12 @@
 	{/if}
 </main>
 
-<style lang="scss">
+<style>
 	main {
-		@include flex(column, center, center);
-
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		height: 100%;
 		max-height: calc(100vh - 6rem);
 	}

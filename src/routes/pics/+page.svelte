@@ -38,7 +38,7 @@
 				src={image.img.src}
 				alt=""
 				loading="lazy"
-				onload="this.style.opacity=1"
+				on:load={(e) => (e.target.style.opacity = 1)}
 				width={image.img.w}
 				height={image.img.h}
 			/>

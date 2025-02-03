@@ -1,5 +1,5 @@
 <script>
-	import '../app.scss';
+	import '../app.css';
 	import '$lib/assets/fonts/space-mono.css';
 	import '$lib/assets/fonts/space-grotesk.css';
 	import 'iconify-icon';
@@ -108,7 +108,8 @@
 		}
 
 		.row {
-			@include flex(row, null, center);
+			display: flex;
+			align-items: center;
 			gap: 1.5rem;
 
 			.pfp {
@@ -129,11 +130,6 @@
 			a {
 				font-size: 1.4rem;
 				font-family: 'Space Mono', monospace;
-			}
-
-			.slash &::after {
-				top: -6px;
-				left: 1.4px;
 			}
 		}
 	}

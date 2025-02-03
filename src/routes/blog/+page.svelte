@@ -18,7 +18,7 @@
 	</div>
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		width: 100%;
 		max-width: 53rem;
@@ -27,7 +27,8 @@
 	}
 
 	.posts {
-		@include flex(column);
+		display: flex;
+		flex-direction: column;
 		gap: 1.5rem;
 		max-width: 100%;
 	}

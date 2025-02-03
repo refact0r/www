@@ -67,7 +67,7 @@
 	</div>
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		width: 100%;
 		padding: 0 0rem 10rem 0rem;
@@ -93,7 +93,8 @@
 
 		.row,
 		.links {
-			@include flex(row, null, center);
+			display: flex;
+			align-items: center;
 			gap: 1rem 2rem;
 		}
 

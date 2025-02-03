@@ -95,7 +95,7 @@
 	</div>
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		width: 100%;
 		max-width: 53rem;

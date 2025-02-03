@@ -23,7 +23,7 @@
 	</div>
 </main>
 
-<style lang="scss">
+<style>
 	main {
 		padding: 0 5rem 5rem 5rem;
 	}
