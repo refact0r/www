@@ -8,7 +8,7 @@
 
 <main>
 	<h1>
-		<iconify-icon icon={metadata.icon} />{metadata.name}
+		<iconify-icon icon={metadata.icon}></iconify-icon>{metadata.name}
 	</h1>
 	<p class="date">{formatDate(metadata.date)}</p>
 	<p class="description">{metadata.description}</p>

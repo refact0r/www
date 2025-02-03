@@ -11,7 +11,9 @@
 		{#each data.posts as post}
 			<a href={'/blog/' + post.slug} class="link">
 				<div class="date">{formatDate(post.date)}</div>
-				<h2><iconify-icon icon={post.icon} />{post.name}<span class="arrow">-></span></h2>
+				<h2>
+					<iconify-icon icon={post.icon}></iconify-icon>{post.name}<span class="arrow">-></span>
+				</h2>
 				<div class="description">{post.description}</div>
 			</a>
 		{/each}
