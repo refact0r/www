@@ -57,11 +57,6 @@
 		margin: 0 auto 10rem auto;
 		padding: 1.5rem;
 	}
-
-	h1 {
-		margin-bottom: 2rem;
-	}
-
 	a {
 		font-family: 'Space Mono', monospace;
 		font-size: 1.2rem;

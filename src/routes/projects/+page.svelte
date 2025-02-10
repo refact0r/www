@@ -31,12 +31,12 @@
 	.posts {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
-		gap: 3rem;
+		gap: 2.5rem;
 		max-width: 100%;
 	}
 
 	h2 {
-		margin: 1rem 0 0.6rem 0;
+		margin: 1rem 0 0.5rem 0;
 		color: var(--txt);
 		font-size: 1.6rem;
 	}

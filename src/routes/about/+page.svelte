@@ -147,8 +147,4 @@
 		text-align: center;
 		font-size: 0.9em;
 	}
-
-	h1 {
-		margin-bottom: 2rem;
-	}
 </style>

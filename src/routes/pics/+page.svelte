@@ -54,10 +54,6 @@
 		padding: 0 5rem;
 	}
 
-	h1 {
-		margin-bottom: 2rem;
-	}
-
 	picture {
 		display: block;
 		margin-bottom: 1rem;
