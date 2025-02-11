@@ -148,7 +148,7 @@
 
 		span {
 			display: inline-block;
-			color: var(--txt-0);
+			color: var(--txt);
 			font-size: 3rem;
 			font-family: 'Space Mono', monospace;
 			transform: scale(1);

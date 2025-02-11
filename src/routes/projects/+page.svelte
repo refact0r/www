@@ -41,6 +41,31 @@
 		font-size: 1.6rem;
 	}
 
+	a :global(picture) {
+		position: relative;
+	}
+
+	a :global(picture::after) {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		opacity: 0;
+		z-index: -1;
+		border: 2px solid var(--bg-3);
+		transition: 0.1s;
+	}
+
+	a:hover :global(picture::after) {
+		top: -0.5rem;
+		left: -0.5rem;
+		right: -0.5rem;
+		bottom: -0.5rem;
+		opacity: 1;
+	}
+
 	@media (max-width: 850px) {
 		main {
 			padding-left: 1.5rem;
