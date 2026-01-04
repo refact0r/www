@@ -5,9 +5,8 @@
 	import { page } from '$app/state';
 	import Logo from '$lib/components/Logo.svelte';
 	import PageHead from '$lib/components/PageHead.svelte';
-	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { beforeNavigate } from '$app/navigation';
+	import { onNavigate } from '$app/navigation';
 
 	let { children } = $props();
 
@@ -19,35 +18,24 @@
 		{ name: 'contact', path: '/contact' }
 	];
 
-	let currPage = $state(page.url.pathname);
-	let prevPage = $state('');
+	function calculateTransitionOffsets(from, to) {
+		const cleanFrom = from.replace(/\/$/, '');
+		const cleanTo = to.replace(/\/$/, '');
 
-	beforeNavigate((navigation) => {
-		if (navigation.to?.url.pathname) {
-			prevPage = currPage;
-			currPage = navigation.to.url.pathname;
-		}
-		console.log(currPage, prevPage);
-	});
+		let currDepth = cleanTo.split('/').length;
+		let prevDepth = cleanFrom.split('/').length;
 
-	function transition(path, out) {
-		const cleanPath = path.replace(/\/$/, '');
-		const cleanPrevPath = prevPage.replace(/\/$/, '');
-
-		let currDepth = cleanPath.split('/').length;
-		let prevDepth = cleanPrevPath.split('/').length;
-
-		const currParent = '/' + cleanPath.split('/')[1];
-		const prevParent = '/' + cleanPrevPath.split('/')[1];
+		const currParent = '/' + cleanTo.split('/')[1];
+		const prevParent = '/' + cleanFrom.split('/')[1];
 
 		let currParentIdx = pages.findIndex((page) => page.path === currParent);
 		let prevParentIdx = pages.findIndex((page) => page.path === prevParent);
 
-		if (path === '/') {
+		if (to === '/') {
 			currParentIdx = prevParentIdx;
 			currDepth = 1;
 		}
-		if (prevPage === '/') {
+		if (from === '/') {
 			prevParentIdx = currParentIdx;
 			prevDepth = 1;
 		}
@@ -55,22 +43,33 @@
 		let xDiff = currParentIdx - prevParentIdx;
 		let yDiff = currDepth - prevDepth;
 
-		if (out) {
-			xDiff *= -1;
-			yDiff *= -1;
-		}
 		if (prefersReducedMotion.current) {
-			xDiff *= 0;
-			yDiff *= 0;
+			xDiff = 0;
+			yDiff = 0;
 		}
 
-		return {
-			duration: 150,
-			delay: out ? 0 : 50,
-			x: `${xDiff * 20}vh`,
-			y: `${yDiff * 20}vh`
-		};
+		return { xDiff, yDiff };
 	}
+
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		const from = navigation.from?.url.pathname || '/';
+		const to = navigation.to?.url.pathname || '/';
+
+		const { xDiff, yDiff } = calculateTransitionOffsets(from, to);
+
+		// Set CSS custom properties for the transition
+		document.documentElement.style.setProperty('--transition-x', `${xDiff * 100}vw`);
+		document.documentElement.style.setProperty('--transition-y', `${yDiff * 100}vh`);
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <PageHead
@@ -94,15 +93,7 @@
 	</nav>
 </header>
 <div class="container" data-sveltekit-noscroll>
-	{#key page.url.pathname}
-		<div
-			class="transition"
-			in:fly={transition(page.url.pathname, false)}
-			out:fly={transition(page.url.pathname, true)}
-		>
-			{@render children?.()}
-		</div>
-	{/key}
+	{@render children?.()}
 </div>
 
 <style>
@@ -150,15 +141,47 @@
 
 	.container {
 		height: 100%;
-		display: grid;
+		view-transition-name: content;
 	}
 
-	.transition {
-		grid-column-start: 1;
-		grid-column-end: 2;
-		grid-row-start: 1;
-		grid-row-end: 2;
-		min-width: 0;
+	/* View Transitions API */
+	@supports (view-transition-name: none) {
+		::view-transition-old(content),
+		::view-transition-new(content) {
+			animation-duration: 200ms;
+			animation-timing-function: linear;
+			mix-blend-mode: normal;
+		}
+
+		::view-transition-old(content) {
+			animation-name: slide-out;
+		}
+
+		::view-transition-new(content) {
+			animation-name: slide-in;
+		}
+
+		::view-transition-group(root) {
+			overflow: visible;
+		}
+
+		@keyframes slide-out {
+			to {
+				transform: translate(
+					calc(var(--transition-x, 0vh) * -1),
+					calc(var(--transition-y, 0vh) * -1)
+				);
+			}
+		}
+
+		@keyframes slide-in {
+			from {
+				transform: translate(
+					calc(var(--transition-x, 0vh) * 2),
+					calc(var(--transition-y, 0vh) * 2)
+				);
+			}
+		}
 	}
 
 	@media (max-width: 850px) {
