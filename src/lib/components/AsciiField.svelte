@@ -4,15 +4,45 @@
 	const CONFIG = {
 		maxPixelRatio: 2,
 		grid: {
-			cellWidth: 17,
-			cellHeight: 21,
-			fontSize: 11
+			cellWidth: 14,
+			cellHeight: 18,
+			fontSize: 12
+		},
+		pattern: {
+			primary: {
+				xFrequency: 11,
+				yFrequency: 2.4,
+				amplitude: 1,
+				speed: 1
+			},
+			vertical: {
+				frequency: 15,
+				amplitude: 0.62,
+				speed: -0.7
+			},
+			diagonal: {
+				frequency: 24,
+				amplitude: 0.28,
+				speed: 0.45
+			},
+			warp: {
+				scale: 4,
+				strength: 0.4,
+				detailScale: 2.8,
+				detailStrength: 0.16,
+				speed: 0.12
+			},
+			contourFrequency: 2.6,
+			threshold: 0.88,
+			thresholdVariation: 0.1,
+			visibilityOffset: 0.025,
+			visibilityRange: 0.05
 		},
 		frameInterval: {
 			idle: 50,
 			burst: 10
 		},
-		driftSpeed: 0.00006,
+		driftSpeed: 0.0001,
 		pointer: {
 			initialX: 0.5,
 			initialY: 0.48,
@@ -29,10 +59,10 @@
 		},
 		color: {
 			hue: 220,
-			saturation: 14,
-			baseLightness: 43,
-			burstLightness: 27,
-			baseAlpha: 0.25,
+			saturation: 15,
+			baseLightness: 50,
+			burstLightness: 25,
+			baseAlpha: 0.35,
 			burstAlpha: 0.8
 		}
 	};
@@ -44,6 +74,21 @@
 	function hash(column, row) {
 		const value = Math.sin(column * 12.9898 + row * 78.233) * 43758.5453;
 		return value - Math.floor(value);
+	}
+
+	function smoothstep(value) {
+		return value * value * (3 - 2 * value);
+	}
+
+	function valueNoise(x, y) {
+		const column = Math.floor(x);
+		const row = Math.floor(y);
+		const offsetX = smoothstep(x - column);
+		const offsetY = smoothstep(y - row);
+		const top = hash(column, row) * (1 - offsetX) + hash(column + 1, row) * offsetX;
+		const bottom = hash(column, row + 1) * (1 - offsetX) + hash(column + 1, row + 1) * offsetX;
+
+		return top * (1 - offsetY) + bottom * offsetY;
 	}
 
 	let { burst = null } = $props();
@@ -139,13 +184,30 @@
 					const influence = clamp01(1 - distance / CONFIG.pointer.radius);
 					const disturbance = influence * influence * CONFIG.pointer.strength;
 
+					const { primary, vertical, diagonal } = CONFIG.pattern;
+					const { warp } = CONFIG.pattern;
+					const warpX = normalizedX * warp.scale * aspect + time * warp.speed;
+					const warpY = normalizedY * warp.scale - time * warp.speed * 0.7;
+					const fieldWarp =
+						(valueNoise(warpX, warpY) - 0.5) * 2 * warp.strength +
+						(valueNoise(warpX * warp.detailScale + 17, warpY * warp.detailScale + 31) - 0.5) *
+							2 *
+							warp.detailStrength;
 					const signal =
-						Math.sin(normalizedX * 11.0 + time + normalizedY * 2.4) +
-						0.62 * Math.sin(normalizedY * 15.0 - time * 0.7) +
-						0.28 * Math.sin((normalizedX - normalizedY) * 24.0 + time * 0.45) +
+						primary.amplitude *
+							Math.sin(
+								normalizedX * primary.xFrequency +
+									time * primary.speed +
+									normalizedY * primary.yFrequency
+							) +
+						vertical.amplitude *
+							Math.sin(normalizedY * vertical.frequency + time * vertical.speed) +
+						diagonal.amplitude *
+							Math.sin((normalizedX - normalizedY) * diagonal.frequency + time * diagonal.speed) +
+						fieldWarp +
 						disturbance;
 
-					const contour = Math.abs(Math.sin(signal * 2.45));
+					const contour = Math.abs(Math.sin(signal * CONFIG.pattern.contourFrequency));
 					const random = hash(column, row);
 					let burstWave = 0;
 
@@ -153,16 +215,20 @@
 						const burstX = (normalizedX - activeBurst.x) * aspect;
 						const burstY = normalizedY - activeBurst.y;
 						const burstDistance = Math.sqrt(burstX * burstX + burstY * burstY);
-						const fieldWarp =
+						const burstWarp =
 							signal * 0.011 + Math.sin(normalizedX * 19.0 - normalizedY * 13.0) * 0.008;
-						const distanceFromWave = (burstDistance + fieldWarp - burstRadius) / burstWidth;
+						const distanceFromWave = (burstDistance + burstWarp - burstRadius) / burstWidth;
 						const waveFront = Math.exp(-distanceFromWave * distanceFromWave * 1.8) * burstLife;
 						const patternVisibility = clamp01((contour - 0.62 - random * 0.14) / 0.24);
 						burstWave = waveFront * (0.16 + patternVisibility * 0.84);
 					}
 
-					const baseThreshold = 0.925 + random * 0.045;
-					const baseVisibility = clamp01((contour - baseThreshold + 0.018) / 0.036);
+					const baseThreshold =
+						CONFIG.pattern.threshold + random * CONFIG.pattern.thresholdVariation;
+					const baseVisibility = clamp01(
+						(contour - baseThreshold + CONFIG.pattern.visibilityOffset) /
+							CONFIG.pattern.visibilityRange
+					);
 					if (baseVisibility < 0.01 && burstWave < 0.01) continue;
 
 					const horizontalFade =
