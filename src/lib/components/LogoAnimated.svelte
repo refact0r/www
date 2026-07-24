@@ -1,20 +1,49 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let { skipInitialAnimation = false } = $props();
+	const INITIAL_ANIMATION_NAME = 'initial-load-660';
+	const HOVER_ANIMATION_NAME = 'hover-loop-660';
+	const COMPLETION_FALLBACK_MS = 3500;
 
-	let initialLoadComplete = $state(skipInitialAnimation);
+	let { skipInitialAnimation = false, onAnimationComplete } = $props();
+
+	let svg;
+	let initialAnimationFinished = $state(false);
+	let initialLoadComplete = $derived(skipInitialAnimation || initialAnimationFinished);
 	let isHovering = $state(false);
 	let isAnimating = $state(false);
+	let completionFallback;
+	let restartTimeout;
 
 	onMount(() => {
-		// Wait for initial load to complete, or skip if prop is set
 		if (!skipInitialAnimation) {
-			setTimeout(() => {
-				initialLoadComplete = true;
-			}, 3000); // 3s
+			// The animation event is authoritative; this only covers browsers
+			// that suppress it before the component finishes mounting.
+			completionFallback = setTimeout(completeInitialAnimation, COMPLETION_FALLBACK_MS);
 		}
+
+		return () => {
+			clearTimeout(completionFallback);
+			clearTimeout(restartTimeout);
+		};
 	});
+
+	function completeInitialAnimation() {
+		if (initialLoadComplete) return;
+		initialAnimationFinished = true;
+		clearTimeout(completionFallback);
+		notifyAnimationComplete();
+	}
+
+	function notifyAnimationComplete() {
+		if (!onAnimationComplete) return;
+
+		const bounds = svg.getBoundingClientRect();
+		onAnimationComplete({
+			x: (bounds.left + bounds.width / 2) / window.innerWidth,
+			y: (bounds.top + bounds.height / 2) / window.innerHeight
+		});
+	}
 
 	function handleMouseEnter() {
 		// Only trigger if initial load is done
@@ -30,23 +59,31 @@
 		isHovering = false;
 	}
 
-	function handleAnimationEnd() {
+	function handleAnimationEnd(event) {
+		if (!initialLoadComplete) {
+			if (event.animationName === INITIAL_ANIMATION_NAME) completeInitialAnimation();
+			return;
+		}
+
+		if (event.animationName !== HOVER_ANIMATION_NAME) return;
+		notifyAnimationComplete();
+
 		// After animation completes, check if still hovering
-		if (initialLoadComplete) {
-			if (isHovering) {
-				// Restart animation by toggling the class
-				isAnimating = false;
-				setTimeout(() => {
-					isAnimating = true;
-				}, 0);
-			} else {
-				isAnimating = false;
-			}
+		if (isHovering) {
+			// Restart animation by toggling the class
+			isAnimating = false;
+			clearTimeout(restartTimeout);
+			restartTimeout = setTimeout(() => {
+				isAnimating = true;
+			}, 0);
+		} else {
+			isAnimating = false;
 		}
 	}
 </script>
 
 <svg
+	bind:this={svg}
 	viewBox="0 0 300 300"
 	xmlns="http://www.w3.org/2000/svg"
 	style="cursor: {initialLoadComplete ? 'pointer' : 'default'};"
@@ -94,22 +131,19 @@
 				}
 			}
 
-			/* Hover loop animations - full 4s cycle */
+			/* Hover loop animations - 3.6s active cycle */
 			@keyframes hover-loop-180 {
 				0% {
 					transform: rotate(180deg) scaleX(1);
 				}
-				17.5% {
+				19.444% {
 					transform: rotate(180deg) scaleX(0);
 				}
-				18% {
+				20% {
 					transform: rotate(0deg) scaleX(0);
 				}
-				35.5% {
+				39.444% {
 					transform: rotate(0deg) scaleX(1);
-				}
-				90% {
-					transform: rotate(180deg) scaleX(1);
 				}
 				100% {
 					transform: rotate(180deg) scaleX(1);
@@ -120,17 +154,14 @@
 				0% {
 					transform: rotate(420deg) scaleX(1);
 				}
-				17.5% {
+				19.444% {
 					transform: rotate(420deg) scaleX(0);
 				}
-				18% {
+				20% {
 					transform: rotate(0deg) scaleX(0);
 				}
-				35.5% {
+				39.444% {
 					transform: rotate(0deg) scaleX(1);
-				}
-				90% {
-					transform: rotate(420deg) scaleX(1);
 				}
 				100% {
 					transform: rotate(420deg) scaleX(1);
@@ -141,17 +172,14 @@
 				0% {
 					transform: rotate(660deg) scaleX(1);
 				}
-				17.5% {
+				19.444% {
 					transform: rotate(660deg) scaleX(0);
 				}
-				18% {
+				20% {
 					transform: rotate(0deg) scaleX(0);
 				}
-				35.5% {
+				39.444% {
 					transform: rotate(0deg) scaleX(1);
-				}
-				90% {
-					transform: rotate(660deg) scaleX(1);
 				}
 				100% {
 					transform: rotate(660deg) scaleX(1);
@@ -194,17 +222,17 @@
 
 			/* Hover animation - runs exactly once */
 			.spinner-line1.animating {
-				animation: hover-loop-180 4s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
+				animation: hover-loop-180 3.6s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
 				transform-origin: 150px 150px;
 			}
 
 			.spinner-line2.animating {
-				animation: hover-loop-420 4s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
+				animation: hover-loop-420 3.6s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
 				transform-origin: 150px 150px;
 			}
 
 			.spinner-line3.animating {
-				animation: hover-loop-660 4s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
+				animation: hover-loop-660 3.6s cubic-bezier(0.55, 0.06, 0.36, 1) 1 forwards !important;
 				transform-origin: 150px 150px;
 			}
 		</style>
@@ -212,7 +240,6 @@
 	<!-- Line 3 (Purple) - bottom layer -->
 	<g
 		class="spinner-line3"
-
 		class:complete={initialLoadComplete}
 		class:animating={isAnimating}
 		onanimationend={handleAnimationEnd}
@@ -228,13 +255,7 @@
 		/>
 	</g>
 	<!-- Line 2 (Blue) - middle layer -->
-	<g
-		class="spinner-line2"
-
-		class:complete={initialLoadComplete}
-		class:animating={isAnimating}
-		onanimationend={handleAnimationEnd}
-	>
+	<g class="spinner-line2" class:complete={initialLoadComplete} class:animating={isAnimating}>
 		<line
 			x1="27.92"
 			y1="150"
@@ -246,13 +267,7 @@
 		/>
 	</g>
 	<!-- Line 1 (Cyan/Teal) - top layer -->
-	<g
-		class="spinner-line1"
-
-		class:complete={initialLoadComplete}
-		class:animating={isAnimating}
-		onanimationend={handleAnimationEnd}
-	>
+	<g class="spinner-line1" class:complete={initialLoadComplete} class:animating={isAnimating}>
 		<line
 			x1="27.92"
 			y1="150"

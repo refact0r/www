@@ -105,7 +105,7 @@
 	</div>
 	<div class="info">
 		<a class="friend external" href="https://abhay7.dev/">abhay7<span class="arrow">/></span></a>
-		<a class="friend external" href="https://yaoderek.github.io/personal/"
+		<a class="friend external" href="https://yaoderek.github.io/"
 			>yaoderek<span class="arrow">/></span></a
 		>
 		<a class="friend external" href="https://evanyfw.space/">evanyfw<span class="arrow">/></span></a

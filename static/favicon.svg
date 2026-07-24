@@ -68,15 +68,15 @@
        cy="132.29167"
        r="132.29167" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#bd63ee;stroke-width:12.6999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#bd63ee;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 93.133302,200.11594 171.45003,64.467396"
        id="path1" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#6262ee;stroke-width:12.6999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#6262ee;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 171.45003,200.11594 93.133302,64.467394"
        id="path2" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#26bbd9;stroke-width:12.6999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#26bbd9;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 53.974939,132.29167 H 210.60839"
        id="path847" />
   </g>
