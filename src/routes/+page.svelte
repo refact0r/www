@@ -30,8 +30,8 @@
 			<a class="nav" href="/blog">
 				<span class="arrow">-></span><span class="slash">/</span>blog
 			</a>
-			<a class="nav" href="/pics">
-				<span class="arrow">-></span><span class="slash">/</span>pics
+			<a class="nav" href="/photos">
+				<span class="arrow">-></span><span class="slash">/</span>photos
 			</a>
 			<a class="nav" href="/contact">
 				<span class="arrow">-></span><span class="slash">/</span>contact

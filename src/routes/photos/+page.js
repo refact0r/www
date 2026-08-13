@@ -17,7 +17,7 @@ export async function load() {
 	return {
 		images,
 		meta: {
-			title: 'pics',
+			title: 'photos',
 			description: 'just some random photos.'
 		}
 	};

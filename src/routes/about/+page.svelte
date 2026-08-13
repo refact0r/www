@@ -110,6 +110,7 @@
 		>
 		<a class="friend external" href="https://evanyfw.space/">evanyfw<span class="arrow">/></span></a
 		>
+		<a class="friend external" href="https://joshuxchn.com/">joshua<span class="arrow">/></span></a>
 	</div>
 	<div class="info">
 		<a class="webring previous" href="https://ctp-webr.ing/refact0r/previous">

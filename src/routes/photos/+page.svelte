@@ -4,7 +4,7 @@
 </script>
 
 <main>
-	<h1>pics<span class="count" aria-label="{images.length} photos">[{images.length}]</span></h1>
+	<h1>photos<span class="count" aria-label="{images.length} photos">[{images.length}]</span></h1>
 	<p>just some random photos. shot on pixel 8, pixel 5a, and pixel 2.</p>
 	<br />
 	<div class="grid">

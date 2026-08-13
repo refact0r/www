@@ -83,7 +83,7 @@ ogImage: 'og-image.png'
         grid-row: 2;
         grid-column: 3;
     }
-    .pics {
+    .photos {
         grid-row: 2;
         grid-column: 4;
     }
@@ -143,7 +143,7 @@ Here's a demonstration of my system. You can click on a box to simulate navigati
         <button class="about" onclick={handleClick}>/about</button>
         <button class="projects" onclick={handleClick}>/projects</button>
         <button class="blog" onclick={handleClick}>/blog</button>
-        <button class="pics" onclick={handleClick}>/pics</button>
+        <button class="photos" onclick={handleClick}>/photos</button>
         <button class="contact" onclick={handleClick}>/contact</button>
         <button class="projects-project" onclick={handleClick}>/projects/project</button>
         <button class="blog-post" onclick={handleClick}>/blog/post</button>
@@ -253,7 +253,7 @@ Now that we have the current and previous pages, we can calculate the transition
     const pages = [
         { name: 'projects', path: '/projects' },
         { name: 'blog', path: '/blog' },
-        { name: 'pics', path: '/pics' },
+        { name: 'photos', path: '/photos' },
         { name: 'about', path: '/about' },
         { name: 'contact', path: '/contact' }
     ];
