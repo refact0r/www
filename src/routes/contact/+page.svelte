@@ -8,6 +8,12 @@
 	let emailCopied = $state(false);
 	let discordCopied = $state(false);
 
+	// assembled at runtime so the address never appears in the static HTML
+	let email = $state('');
+	$effect(() => {
+		email = ['hello', 'refact0r.dev'].join('@');
+	});
+
 	const handleSubmit = async (data) => {
 		data.preventDefault();
 
@@ -33,7 +39,7 @@
 	};
 
 	const copyEmail = async () => {
-		await navigator.clipboard.writeText('refact0r.contact@gmail.com');
+		await navigator.clipboard.writeText(email);
 		emailCopied = true;
 		setTimeout(() => (emailCopied = false), 1000);
 	};
@@ -50,8 +56,8 @@
 	<p>ways to get in touch.</p>
 	<div class="info">
 		<EmailIcon />email <span class="sub">-></span>
-		<a href="mailto:refact0r.contact@gmail.com" class="external"
-			>refact0r.contact@gmail.com<span class="arrow">/></span>
+		<a href={email ? `mailto:${email}` : undefined} class="external"
+			>{email}<span class="arrow">/></span>
 		</a>
 		<button class="copy-btn" onclick={copyEmail} aria-label="Copy email">
 			{#if emailCopied}
