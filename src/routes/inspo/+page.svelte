@@ -45,7 +45,10 @@
 				>[{inspo.items.length}]</span
 			>{/if}
 	</h1>
-	<p>design inspiration collected from around the web.</p>
+	<p>
+		design inspiration collected from around the web. stored in
+		<a href="https://collect.refact0r.dev" target="_blank">re-collect</a>.
+	</p>
 	<br />
 	{#if error}
 		<p class="muted">couldn't load items. try again later?</p>
@@ -103,6 +106,16 @@
 
 	.muted {
 		color: var(--txt-3);
+	}
+
+	p a {
+		font-weight: 600;
+		text-decoration: underline var(--txt-3) 2px;
+		transition: text-decoration-color 0.2s;
+
+		&:hover {
+			text-decoration-color: var(--txt);
+		}
 	}
 
 	.grid {
