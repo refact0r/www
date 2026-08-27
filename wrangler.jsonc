@@ -1,8 +1,23 @@
 {
 	"name": "www",
 	"compatibility_date": "2025-09-02",
+	"main": "worker/index.js",
 	"assets": {
 		"directory": "build",
+		"binding": "ASSETS",
 		"not_found_handling": "404-page"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "INSPO_KV",
+			"id": "39109efd30e24007b0ec24d2017ffe1a"
+		}
+	],
+	"triggers": {
+		"crons": ["0 9 * * *"]
+	},
+	"vars": {
+		"INSPO_COLLECTION": "web design"
 	}
+	// CONVEX_URL is a secret: `wrangler secret put CONVEX_URL` (and .dev.vars locally)
 }

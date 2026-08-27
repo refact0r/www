@@ -16,6 +16,7 @@
 		{ name: 'projects', path: '/projects' },
 		{ name: 'blog', path: '/blog' },
 		{ name: 'photos', path: '/photos' },
+		{ name: 'inspo', path: '/inspo' },
 		{ name: 'contact', path: '/contact' }
 	];
 

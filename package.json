@@ -30,12 +30,12 @@
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
 		"sass": "^1.99.0",
+		"shiki": "^4.0.2",
 		"svelte": "^5.55.1",
 		"unplugin-icons": "^23.0.1",
 		"vite": "^8.0.3",
 		"vitest": "^4.1.2",
-		"shiki": "^4.0.2",
-		"wrangler": "^4.80.0"
+		"wrangler": "^4.126.0"
 	},
 	"type": "module",
 	"dependencies": {
