@@ -7,7 +7,7 @@ My personal website/portfolio/blog. Includes about, projects, blog posts, photos
 - SvelteKit (Svelte 5) with `@sveltejs/adapter-static` — fully prerendered
 - Vanilla CSS: global `src/app.css` + scoped component styles
 - Content: mdsvex + shiki highlighting (`svelte.config.js`), `@sveltejs/enhanced-img` for responsive images
-- Deployment: Cloudflare Workers via wrangler (`npm run deploy`) — static assets from `build/` plus a small worker
+- Deployment: Cloudflare Workers via wrangler — static assets from `build/` plus a small worker
 
 ## Structure
 
