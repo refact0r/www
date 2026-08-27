@@ -33,6 +33,9 @@
 			<a class="nav" href="/photos">
 				<span class="arrow">-></span><span class="slash">/</span>photos
 			</a>
+			<a class="nav" href="/inspo">
+				<span class="arrow">-></span><span class="slash">/</span>inspo
+			</a>
 			<a class="nav" href="/contact">
 				<span class="arrow">-></span><span class="slash">/</span>contact
 			</a>

@@ -3,8 +3,8 @@
 
 const KV_KEY = 'inspo';
 
-async function convexQuery(env, path, args) {
-	const res = await fetch(`${env.CONVEX_URL}/api/query`, {
+async function convexQuery(convexUrl, path, args) {
+	const res = await fetch(`${convexUrl}/api/query`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ path, args, format: 'json' })
@@ -15,30 +15,52 @@ async function convexQuery(env, path, args) {
 	return data.value;
 }
 
-async function refresh(env) {
-	const collections = await convexQuery(env, 'collections:listWithCounts', {});
-	const collection = collections.find((c) => c.name === env.INSPO_COLLECTION);
-	if (!collection) throw new Error(`collection "${env.INSPO_COLLECTION}" not found`);
+// Also used by the vite dev middleware (vite.config.js) so /inspo.json works in dev.
+// Merges the named collections into one list, newest first.
+export async function fetchInspo(convexUrl, collectionNames) {
+	const collections = await convexQuery(convexUrl, 'collections:listWithCounts', {});
 
-	const items = await convexQuery(env, 'items:listByCollection', {
-		collectionId: collection._id
-	});
+	const items = [];
+	for (const name of collectionNames) {
+		const collection = collections.find((c) => c.name === name);
+		if (!collection) throw new Error(`collection "${name}" not found`);
 
-	const data = {
+		const collectionItems = await convexQuery(convexUrl, 'items:listByCollection', {
+			collectionId: collection._id
+		});
+		for (const item of collectionItems) {
+			// Items can belong to multiple collections; keep the first occurrence
+			if (!items.some((existing) => existing.id === item._id)) {
+				items.push({
+					id: item._id,
+					collection: name,
+					type: item.type,
+					title: item.title,
+					url: item.url,
+					content: item.content,
+					imageUrl: item.imageUrl,
+					imageWidth: item.imageWidth,
+					imageHeight: item.imageHeight,
+					dateAdded: item.dateAdded
+				});
+			}
+		}
+	}
+	items.sort((a, b) => b.dateAdded - a.dateAdded);
+
+	return {
 		updatedAt: Date.now(),
-		collection: collection.name,
-		items: items.map((item) => ({
-			id: item._id,
-			type: item.type,
-			title: item.title,
-			url: item.url,
-			content: item.content,
-			imageUrl: item.imageUrl,
-			imageWidth: item.imageWidth,
-			imageHeight: item.imageHeight
-		}))
+		collections: collectionNames,
+		items
 	};
+}
 
+function collectionNames(env) {
+	return env.INSPO_COLLECTIONS.split(',').map((name) => name.trim());
+}
+
+async function refresh(env) {
+	const data = await fetchInspo(env.CONVEX_URL, collectionNames(env));
 	await env.INSPO_KV.put(KV_KEY, JSON.stringify(data));
 	return data;
 }

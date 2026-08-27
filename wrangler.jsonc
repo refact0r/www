@@ -17,7 +17,7 @@
 		"crons": ["0 9 * * *"]
 	},
 	"vars": {
-		"INSPO_COLLECTION": "web design"
+		"INSPO_COLLECTIONS": "web design, visual art"
 	}
 	// CONVEX_URL is a secret: `wrangler secret put CONVEX_URL` (and .dev.vars locally)
 }
