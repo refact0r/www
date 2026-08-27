@@ -1,3 +1,3 @@
 my website <https://refact0r.dev>.
 
-built with sveltekit & mdsvex, deployed on cloudflare pages.
+built with sveltekit & mdsvex, deployed on cloudflare.

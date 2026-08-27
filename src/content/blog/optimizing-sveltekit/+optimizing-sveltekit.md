@@ -395,6 +395,6 @@ You can see from the page weight on right that the optimized site is much smalle
 
 There are still a few things I'd like to do, such as setting more detailed `sizes` attributes on all images and eventually using the `&lt;enhanced:img&gt;` component. But for now, I'm happy with the performance of my site.
 
-All the source code is available on [GitHub](https://github.com/refact0r/personal).
+All the source code is available on [GitHub](https://github.com/refact0r/www).
 
 I hope this post has been helpful or at least interesting. If you have any feedback, feel free to [contact me](/contact).
