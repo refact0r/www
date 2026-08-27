@@ -1,4 +1,5 @@
 <script>
+	import ContributionGraph from '$lib/components/ContributionGraph.svelte';
 	import GithubIcon from '~icons/ph/github-logo';
 	import DiscordIcon from '~icons/ph/discord-logo';
 	import KofiIcon from '~icons/ph/coffee';
@@ -8,7 +9,7 @@
 		tech: {
 			languages: ['js', 'ts', 'python', 'java', 'dart', 'html', 'css'],
 			frameworks: ['sveltekit', 'flutter', 'tensorflow'],
-			tools: ['vscode', 'claude code', 'codex', 'figma', 'inkscape']
+			tools: ['vscode', 'zed', 'claude code', 'codex', 'figma', 'inkscape']
 		}
 	};
 </script>
@@ -59,8 +60,10 @@
 			{/each}
 		</div>
 	{/each}
+	<h2>contributions</h2>
+	<ContributionGraph />
 	<h2>colophon</h2>
-	<a href="https://github.com/refact0r/personal" class="external"
+	<a href="https://github.com/refact0r/www" class="external"
 		>github repo<span class="arrow">/></span></a
 	>
 	<a href="https://us.umami.is/share/HwZnyuHQ5Rqz3NWf/refact0r.dev" class="external"
@@ -68,7 +71,7 @@
 	>
 	<div class="info">
 		stack <span class="sub">-></span> sveltekit <span class="sub">/</span> mdsvex
-		<span class="sub">/</span> vite <span class="sub">/</span> cloudflare pages
+		<span class="sub">/</span> vite <span class="sub">/</span> cloudflare
 	</div>
 	<div class="info">
 		fonts <span class="sub">-></span> space mono <span class="sub">/</span>

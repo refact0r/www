@@ -1,7 +1,6 @@
-// Serves /inspo.json from KV, refreshed daily by cron from the re-collect
-// Convex deployment. All other requests fall through to static assets.
-
-const KV_KEY = 'inspo';
+// Serves /inspo.json (from the re-collect Convex deployment) and /github.json
+// (from github's public contribution calendar) out of KV, refreshed daily by
+// cron. All other requests fall through to static assets.
 
 async function convexQuery(convexUrl, path, args) {
 	const res = await fetch(`${convexUrl}/api/query`, {
@@ -55,51 +54,103 @@ export async function fetchInspo(convexUrl, collectionNames) {
 	};
 }
 
+// Also used by the vite dev middleware. Scrapes the public contribution
+// calendar (no token needed): cell dates/levels come from <td data-date
+// data-level>, per-day counts from the matching <tool-tip> elements.
+export async function fetchGithub(username) {
+	const res = await fetch(`https://github.com/users/${username}/contributions`, {
+		headers: { 'User-Agent': 'refact0r.dev worker' }
+	});
+	if (!res.ok) throw new Error(`github contributions: HTTP ${res.status}`);
+	const html = await res.text();
+
+	const counts = {};
+	for (const [, id, count] of html.matchAll(
+		/for="(contribution-day-component[\d-]+)"[^>]*>\s*(No|[\d,]+) contribution/g
+	)) {
+		counts[id] = count === 'No' ? 0 : Number(count.replaceAll(',', ''));
+	}
+
+	const days = [];
+	for (const [tag] of html.matchAll(/<td[^>]*data-date="[^"]*"[^>]*>/g)) {
+		const date = tag.match(/data-date="([^"]+)"/)[1];
+		const level = Number(tag.match(/data-level="(\d)"/)?.[1] ?? 0);
+		const id = tag.match(/id="([^"]+)"/)?.[1];
+		days.push({ date, level, count: counts[id] ?? 0 });
+	}
+	if (days.length === 0) throw new Error('github contributions: no days parsed');
+	days.sort((a, b) => (a.date < b.date ? -1 : 1));
+
+	return {
+		updatedAt: Date.now(),
+		user: username,
+		total: days.reduce((sum, day) => sum + day.count, 0),
+		days
+	};
+}
+
 function collectionNames(env) {
 	return env.INSPO_COLLECTIONS.split(',').map((name) => name.trim());
 }
 
-async function refresh(env) {
-	const data = await fetchInspo(env.CONVEX_URL, collectionNames(env));
-	await env.INSPO_KV.put(KV_KEY, JSON.stringify(data));
+const SOURCES = {
+	inspo: {
+		path: '/inspo.json',
+		fetch: (env) => fetchInspo(env.CONVEX_URL, collectionNames(env))
+	},
+	github: {
+		path: '/github.json',
+		fetch: (env) => fetchGithub(env.GITHUB_USERNAME)
+	}
+};
+
+async function refresh(env, key) {
+	const data = await SOURCES[key].fetch(env);
+	await env.INSPO_KV.put(key, JSON.stringify(data));
 	return data;
 }
 
 export default {
 	async scheduled(controller, env) {
-		try {
-			await refresh(env);
-			await env.INSPO_KV.put(`${KV_KEY}:status`, JSON.stringify({ lastRun: Date.now(), ok: true }));
-		} catch (err) {
-			await env.INSPO_KV.put(
-				`${KV_KEY}:status`,
-				JSON.stringify({ lastRun: Date.now(), ok: false, error: err.message })
-			);
-			throw err;
+		const errors = [];
+		for (const key of Object.keys(SOURCES)) {
+			try {
+				await refresh(env, key);
+				await env.INSPO_KV.put(`${key}:status`, JSON.stringify({ lastRun: Date.now(), ok: true }));
+			} catch (err) {
+				errors.push(`${key}: ${err.message}`);
+				await env.INSPO_KV.put(
+					`${key}:status`,
+					JSON.stringify({ lastRun: Date.now(), ok: false, error: err.message })
+				);
+			}
 		}
+		if (errors.length > 0) throw new Error(errors.join('; '));
 	},
 
 	async fetch(request, env) {
 		const url = new URL(request.url);
 
-		if (url.pathname === '/inspo.json') {
-			let body = await env.INSPO_KV.get(KV_KEY);
-			if (!body) {
-				try {
-					body = JSON.stringify(await refresh(env));
-				} catch (err) {
-					return new Response(JSON.stringify({ error: err.message }), {
-						status: 503,
-						headers: { 'Content-Type': 'application/json' }
-					});
+		for (const key of Object.keys(SOURCES)) {
+			if (url.pathname === SOURCES[key].path) {
+				let body = await env.INSPO_KV.get(key);
+				if (!body) {
+					try {
+						body = JSON.stringify(await refresh(env, key));
+					} catch (err) {
+						return new Response(JSON.stringify({ error: err.message }), {
+							status: 503,
+							headers: { 'Content-Type': 'application/json' }
+						});
+					}
 				}
+				return new Response(body, {
+					headers: {
+						'Content-Type': 'application/json',
+						'Cache-Control': 'public, max-age=3600'
+					}
+				});
 			}
-			return new Response(body, {
-				headers: {
-					'Content-Type': 'application/json',
-					'Cache-Control': 'public, max-age=3600'
-				}
-			});
 		}
 
 		return env.ASSETS.fetch(request);
