@@ -1,12 +1,31 @@
 <script>
 	let inspo = $state(null);
 	let error = $state(false);
+	let width = $state(null);
 
 	$effect(() => {
 		fetch('/inspo.json')
 			.then((res) => (res.ok ? res.json() : Promise.reject(new Error(res.status))))
 			.then((data) => (inspo = data))
 			.catch(() => (error = true));
+	});
+
+	const colCount = $derived(width === null ? 3 : width <= 850 ? 1 : width <= 1400 ? 2 : 3);
+
+	// Distribute items (newest first) into the currently-shortest column so
+	// recency reads across the top. Heights are known up front from the stored
+	// image dimensions, so no DOM measurement is needed.
+	const columns = $derived.by(() => {
+		if (!inspo) return [];
+		const cols = Array.from({ length: colCount }, () => ({ height: 0, items: [] }));
+		inspo.items.forEach((item, index) => {
+			const ratio = item.imageWidth && item.imageHeight ? item.imageHeight / item.imageWidth : 0.8;
+			const col = cols.reduce((a, b) => (b.height < a.height ? b : a));
+			// Eagerly load roughly the first two rows; lazy-load the rest
+			col.items.push({ ...item, eager: index < colCount * 2 });
+			col.height += ratio + 0.1;
+		});
+		return cols.map((col) => col.items);
 	});
 
 	function hostname(url) {
@@ -17,6 +36,8 @@
 		}
 	}
 </script>
+
+<svelte:window bind:innerWidth={width} />
 
 <main>
 	<h1>
@@ -32,35 +53,39 @@
 		<p class="muted">loading...</p>
 	{:else}
 		<div class="grid">
-			{#each inspo.items as item (item.id)}
-				<div class="item">
-					{#if item.imageUrl}
-						<a
-							href={item.url ?? item.imageUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							title={item.title}
-						>
-							<img
-								src={item.imageUrl}
-								alt={item.title ?? ''}
-								loading="lazy"
-								onload={(e) => (e.target.style.opacity = 1)}
-								style:aspect-ratio={item.imageWidth && item.imageHeight
-									? `${item.imageWidth} / ${item.imageHeight}`
-									: undefined}
-							/>
-						</a>
-					{:else if item.type === 'text'}
-						<div class="text-card">{item.content}</div>
-					{/if}
-					{#if item.type === 'url' && item.url}
-						<a class="caption" href={item.url} target="_blank" rel="noopener noreferrer"
-							>{hostname(item.url)}</a
-						>
-					{:else if item.title}
-						<span class="caption">{item.title}</span>
-					{/if}
+			{#each columns as col, i (i)}
+				<div class="col">
+					{#each col as item (item.id)}
+						<div class="item">
+							{#if item.imageUrl}
+								<a
+									href={item.url ?? item.imageUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									title={item.title}
+								>
+									<img
+										src={item.imageUrl}
+										alt={item.title ?? ''}
+										width={item.imageWidth}
+										height={item.imageHeight}
+										loading={item.eager ? 'eager' : 'lazy'}
+										decoding="async"
+										onload={(e) => (e.target.style.opacity = 1)}
+									/>
+								</a>
+							{:else if item.type === 'text'}
+								<div class="text-card">{item.content}</div>
+							{/if}
+							{#if item.type === 'url' && item.url}
+								<a class="caption" href={item.url} target="_blank" rel="noopener noreferrer"
+									>{hostname(item.url)}</a
+								>
+							{:else if item.title}
+								<span class="caption">{item.title}</span>
+							{/if}
+						</div>
+					{/each}
 				</div>
 			{/each}
 		</div>
@@ -81,12 +106,17 @@
 	}
 
 	.grid {
-		columns: 3;
-		column-gap: 1rem;
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+
+	.col {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.item {
-		break-inside: avoid;
 		margin-bottom: 1rem;
 	}
 
@@ -116,19 +146,10 @@
 		color: var(--txt);
 	}
 
-	@media (max-width: 1400px) {
-		.grid {
-			columns: 2;
-		}
-	}
-
 	@media (max-width: 850px) {
 		main {
 			padding-left: 1.5rem;
 			padding-right: 1.5rem;
-		}
-		.grid {
-			columns: 1;
 		}
 	}
 </style>
