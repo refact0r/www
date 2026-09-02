@@ -14,7 +14,7 @@ Gradenight was an unofficial client for StudentVUE, the Synergy student informat
 
 Gradenight was my first real experience with SvelteKit apart from to-do lists, and it really taught me the intricacies of web development. This was the first project where I actually had to consider performance, accessibility, mobile compatibility, privacy, and other factors.
 
-To fetch data from StudentVUE's backend, I took advantage of the [StudentVue.js](https://github.com/StudentVue/StudentVue.js) library. While this library handled the annoying part of converting the XML data into a usable json format, I had to do a lot of work to process the data myself. This includes converting the string values into numbers, formatting names and dates, and generating graphs and dynamic colors.
+To fetch data, I took advantage of the [StudentVue.js](https://github.com/StudentVue/StudentVue.js) library. While this library handled the annoying part of converting the XML data into a usable json format, I had to do a lot of work to process the data myself. This includes converting the string values into numbers, formatting names and dates, and generating graphs and dynamic colors.
 
 In a funny twist of fate, one of my school's IT administrators noticed my website after I used it on school computers. He then proceeded to block the website for "taking student logins". This was a fair concern, as login credentials must be provided to access the StudentVue API. To prevent privacy and trust issues, I decided to keep login info locally in the browser as cookies, only using it to fetch data from the API.
 
