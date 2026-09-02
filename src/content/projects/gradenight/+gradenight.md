@@ -20,6 +20,6 @@ In a funny twist of fate, one of my school's IT administrators noticed my websit
 
 The aspect of the app that I'm most proud of is the grades graph. I had to figure out how to wrangle my data to work with [chart.js](https://www.chartjs.org/) library and make it display properly. The hardest part was getting the graph to show color gradients based on the grade at each point. For example, if the grade trended from an A to a C over time, the graph would show a gradient of green to yellow.
 
-In terms of design, the web app takes inspiration from my [midnight discord theme](/projects/midnight). Looking back on it, the design has some clear issues, but it did look much better than the StudentVUE website.
+In terms of design, the web app takes inspiration from my [midnight discord theme](/projects/midnight). Looking back on it, the design has some clear issues, but I think it at least looks cool.
 
 Probably the most impactful aspect of the project was the "fake assignment" feature. This allowed users to create assignments that didn't actually exist in the StudentVUE system, which was useful for figuring out the minimum grade needed on future assignments/tests to keep a certain grade. Many of my classmates told me about how helpful this feature was for reducing anxiety around grades.
