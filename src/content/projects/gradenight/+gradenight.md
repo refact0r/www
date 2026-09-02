@@ -5,11 +5,12 @@ description: an improved grade checker web app
 thumbnail: gradenight.png
 images: [gradenight.png, gradenight1.png, gradenight2.png]
 github: https://github.com/refact0r/gradenight
-website: https://gradenight.netlify.app
 date: 2022-01-05
 ---
 
-Gradenight is a better looking and easier to use version of StudentVUE. StudentVUE/Synergy is the software that my high school used to track and manage students' grades.
+*gradenight is an independent project and is not affiliated with, endorsed by, or supported by Edupoint Educational Systems. StudentVue and Synergy are trademarks of Edupoint.*
+
+Gradenight was an unofficial client for StudentVUE, the Synergy student information system my high school used to track grades, with a cleaner interface and a few features the official site lacked.
 
 Gradenight was my first real experience with SvelteKit apart from to-do lists, and it really taught me the intricacies of web development. This was the first project where I actually had to consider performance, accessibility, mobile compatibility, privacy, and other factors.
 
