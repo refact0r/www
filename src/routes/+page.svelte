@@ -91,7 +91,7 @@
 		margin: 1rem 0;
 	}
 
-	@media (max-width: 600px) {
+	@media (max-width: 720px) {
 		nav {
 			flex-direction: column;
 			gap: 1rem;

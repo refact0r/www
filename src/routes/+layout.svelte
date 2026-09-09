@@ -166,7 +166,7 @@
 		min-width: 0;
 	}
 
-	@media (max-width: 850px) {
+	@media (max-width: 1080px) {
 		header {
 			padding: 0 1.5rem;
 			gap: 1.5rem;
@@ -177,7 +177,7 @@
 		}
 	}
 
-	@media (max-width: 700px) {
+	@media (max-width: 820px) {
 		header nav {
 			display: none;
 		}
