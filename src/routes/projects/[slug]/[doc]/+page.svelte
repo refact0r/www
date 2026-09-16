@@ -1,9 +1,7 @@
 <script>
 	let { data } = $props();
 
-	let { default: content } = data.document;
-
-	const Content = $derived(content);
+	let { default: Content } = $derived(data.document);
 </script>
 
 <main>

@@ -4,7 +4,7 @@
 
 	let { data } = $props();
 
-	let { default: content, metadata } = data.post;
+	let { default: Content, metadata } = $derived(data.post);
 
 	let emblaApi;
 	let options = { loop: true, align: 'center' };
@@ -22,8 +22,6 @@
 	function emblaPrev() {
 		emblaApi.scrollPrev();
 	}
-
-	const Content = $derived(content);
 </script>
 
 <main>

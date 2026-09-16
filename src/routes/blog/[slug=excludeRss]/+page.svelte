@@ -3,10 +3,8 @@
 	import { iconMap } from '$lib/js/icons.js';
 
 	let { data } = $props();
-	let { default: content, metadata } = data.post;
-	let Icon = iconMap[metadata.icon];
-
-	const Content = $derived(content);
+	let { default: Content, metadata } = $derived(data.post);
+	let Icon = $derived(iconMap[metadata.icon]);
 </script>
 
 <main>

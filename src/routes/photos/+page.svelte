@@ -1,6 +1,6 @@
 <script>
 	let { data } = $props();
-	const images = data.images;
+	let images = $derived(data.images);
 </script>
 
 <main>

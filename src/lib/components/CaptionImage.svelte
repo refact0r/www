@@ -3,7 +3,7 @@
 
 	let { image, alt = '', source = '', sizes = '', loading = '' } = $props();
 
-	source = source.replace(/</g, '').replace(/>/g, '');
+	let cleanSource = $derived(source.replace(/[<>]/g, ''));
 </script>
 
 <figure>
@@ -11,8 +11,8 @@
 	{#if alt !== ''}
 		<figcaption>
 			{alt}
-			{#if source !== ''}
-				<a href={source}>source</a>{/if}
+			{#if cleanSource !== ''}
+				<a href={cleanSource}>source</a>{/if}
 		</figcaption>
 	{/if}
 </figure>
