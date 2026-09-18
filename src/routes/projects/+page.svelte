@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import Image from '$lib/components/Image.svelte';
 
 	let { data } = $props();
@@ -21,7 +22,7 @@
 					fetchpriority={index < 3 ? 'high' : 'auto'}
 					--aspect-ratio="16/9"
 				/>
-				<h2>{post.name}<span class="arrow">-></span></h2>
+				<h2>{post.name}<Arrow /></h2>
 				<div class="description">{post.description}</div>
 			</a>
 		{/each}

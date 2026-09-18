@@ -7,7 +7,7 @@
 </script>
 
 <figure>
-	<Image {image} {alt} {sizes} {loading} />
+	<Image {image} alt="" {sizes} {loading} />
 	{#if alt !== ''}
 		<figcaption>
 			{alt}

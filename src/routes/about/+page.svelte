@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import ContributionGraph from '$lib/components/ContributionGraph.svelte';
 	import GithubIcon from '~icons/ph/github-logo';
 	import DiscordIcon from '~icons/ph/discord-logo';
@@ -24,22 +25,22 @@
 	<h2>links</h2>
 	<div class="links">
 		<a href="https://github.com/refact0r" class="external icon">
-			<GithubIcon /><span class="text">github</span><span class="arrow">/></span>
+			<GithubIcon /><span class="text">github</span><Arrow glyph="/>" />
 		</a>
 		<a href="https://x.com/refact_r" class="external icon">
-			<XIcon /><span class="text">x/twitter</span><span class="arrow">/></span>
+			<XIcon /><span class="text">x/twitter</span><Arrow glyph="/>" />
 		</a>
 		<a href="https://discord.com/users/508863359777505290" class="external icon">
-			<DiscordIcon /><span class="text">discord</span><span class="arrow">/></span>
+			<DiscordIcon /><span class="text">discord</span><Arrow glyph="/>" />
 		</a>
 		<a href="https://ko-fi.com/refact0r" class="external icon">
-			<KofiIcon /><span class="text">ko-fi</span><span class="arrow">/></span>
+			<KofiIcon /><span class="text">ko-fi</span><Arrow glyph="/>" />
 		</a>
 	</div>
 	<!-- <h2>languages</h2>
 	{#each Object.keys(content.languages) as category}
 		<div class="info">
-			{category} <span class="sub">-></span>
+			{category} <span class="sub" aria-hidden="true">-></span>
 			{#each content.languages[category] as item}
 				{item}
 				{#if item !== content.languages[category][content.languages[category].length - 1]}
@@ -51,7 +52,7 @@
 	<h2>tech</h2>
 	{#each Object.keys(content.tech) as category}
 		<div class="info">
-			{category} <span class="sub">-></span>
+			{category} <span class="sub" aria-hidden="true">-></span>
 			{#each content.tech[category] as item}
 				{item}
 				{#if item !== content.tech[category][content.tech[category].length - 1]}
@@ -63,18 +64,16 @@
 	<h2>contributions</h2>
 	<ContributionGraph />
 	<h2>colophon</h2>
-	<a href="https://github.com/refact0r/www" class="external"
-		>github repo<span class="arrow">/></span></a
-	>
+	<a href="https://github.com/refact0r/www" class="external">github repo<Arrow glyph="/>" /></a>
 	<a href="https://us.umami.is/share/HwZnyuHQ5Rqz3NWf/refact0r.dev" class="external"
-		>analytics<span class="arrow">/></span></a
+		>analytics<Arrow glyph="/>" /></a
 	>
 	<div class="info">
-		stack <span class="sub">-></span> sveltekit <span class="sub">/</span> mdsvex
+		stack <span class="sub" aria-hidden="true">-></span> sveltekit <span class="sub">/</span> mdsvex
 		<span class="sub">/</span> vite <span class="sub">/</span> cloudflare
 	</div>
 	<div class="info">
-		fonts <span class="sub">-></span> space mono <span class="sub">/</span>
+		fonts <span class="sub" aria-hidden="true">-></span> space mono <span class="sub">/</span>
 		<span style="font-family: 'Space Grotesk Variable'">space grotesk</span>
 	</div>
 	<div class="info">
@@ -107,22 +106,24 @@
 		</a>
 	</div>
 	<div class="info">
-		<a class="friend external" href="https://abhay7.dev/">abhay7<span class="arrow">/></span></a>
-		<a class="friend external" href="https://yaoderek.github.io/"
-			>yaoderek<span class="arrow">/></span></a
-		>
-		<a class="friend external" href="https://evanyfw.space/">evanyfw<span class="arrow">/></span></a
-		>
-		<a class="friend external" href="https://joshuxchn.com/">joshua<span class="arrow">/></span></a>
+		<a class="friend external" href="https://abhay7.dev/">abhay7<Arrow glyph="/>" /></a>
+		<a class="friend external" href="https://yaoderek.github.io/">yaoderek<Arrow glyph="/>" /></a>
+		<a class="friend external" href="https://evanyfw.space/">evanyfw<Arrow glyph="/>" /></a>
+		<a class="friend external" href="https://joshuxchn.com/">joshua<Arrow glyph="/>" /></a>
 	</div>
 	<div class="info">
-		<a class="webring previous" href="https://ctp-webr.ing/refact0r/previous">
-			<span> &lt;- </span>&nbsp;
+		<a
+			class="webring previous"
+			href="https://ctp-webr.ing/refact0r/previous"
+			aria-label="previous site in ctp webring"
+		>
+			<span aria-hidden="true"> &lt;- </span>&nbsp;
 		</a><a class="webring home" href="https://ctp-webr.ing/">ctp webring</a><a
 			class="webring next"
 			href="https://ctp-webr.ing/refact0r/next"
+			aria-label="next site in ctp webring"
 		>
-			&nbsp;<span> -> </span>
+			&nbsp;<span aria-hidden="true"> -> </span>
 		</a>
 	</div>
 </main>

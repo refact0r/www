@@ -1,4 +1,6 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
+
 	let { data } = $props();
 
 	let { default: Content } = $derived(data.document);
@@ -6,7 +8,7 @@
 
 <main>
 	<div class="head">
-		<a href="/projects/{data.slug}" class="back"><span class="arrow">&lt;-</span>{data.slug}</a>
+		<a href="/projects/{data.slug}" class="back"><Arrow glyph="<-" />{data.slug}</a>
 	</div>
 	<div class="content">
 		<Content />

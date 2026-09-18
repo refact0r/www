@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import AsciiField from '$lib/components/AsciiField.svelte';
 	import LogoAnimated from '$lib/components/LogoAnimated.svelte';
 
@@ -22,22 +23,22 @@
 		<p>hey there! i'm yifan. i care about how software works, learns, and feels.</p>
 		<nav>
 			<a class="nav" href="/about">
-				<span class="arrow">-></span><span class="slash">/</span>about
+				<Arrow /><span class="slash" aria-hidden="true">/</span>about
 			</a>
 			<a class="nav" href="/projects">
-				<span class="arrow">-></span><span class="slash">/</span>projects
+				<Arrow /><span class="slash" aria-hidden="true">/</span>projects
 			</a>
 			<a class="nav" href="/blog">
-				<span class="arrow">-></span><span class="slash">/</span>blog
+				<Arrow /><span class="slash" aria-hidden="true">/</span>blog
 			</a>
 			<a class="nav" href="/photos">
-				<span class="arrow">-></span><span class="slash">/</span>photos
+				<Arrow /><span class="slash" aria-hidden="true">/</span>photos
 			</a>
 			<a class="nav" href="/inspo">
-				<span class="arrow">-></span><span class="slash">/</span>inspo
+				<Arrow /><span class="slash" aria-hidden="true">/</span>inspo
 			</a>
 			<a class="nav" href="/contact">
-				<span class="arrow">-></span><span class="slash">/</span>contact
+				<Arrow /><span class="slash" aria-hidden="true">/</span>contact
 			</a>
 		</nav>
 	</div>

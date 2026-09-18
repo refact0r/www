@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import { formatDate } from '$lib/js/utils.js';
 	import { iconMap } from '$lib/js/icons.js';
 
@@ -9,7 +10,7 @@
 
 <main>
 	<div class="head">
-		<a href="/blog" class="back"><span class="arrow">&lt;-</span>blog</a>
+		<a href="/blog" class="back"><Arrow glyph="<-" />blog</a>
 	</div>
 	<h1>
 		<Icon class="icon" />{metadata.name}

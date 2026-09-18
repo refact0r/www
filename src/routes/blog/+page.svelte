@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import { formatDate } from '$lib/js/utils.js';
 	import { iconMap } from '$lib/js/icons.js';
 	import RssIcon from '~icons/ph/rss';
@@ -8,7 +9,9 @@
 
 <main>
 	<div class="header">
-		<h1>blog<span class="count" aria-label="{data.posts.length} posts">[{data.posts.length}]</span></h1>
+		<h1>
+			blog<span class="count" aria-label="{data.posts.length} posts">[{data.posts.length}]</span>
+		</h1>
 		<a href="/blog/rss.xml" class="rss-link"><RssIcon /> rss</a>
 	</div>
 
@@ -20,7 +23,7 @@
 				<h2>
 					{#if post.icon}
 						<Icon class="icon" />
-					{/if}{post.name}<span class="arrow">-></span>
+					{/if}{post.name}<Arrow />
 				</h2>
 				<div class="description">{post.description}</div>
 			</a>

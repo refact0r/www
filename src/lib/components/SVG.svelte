@@ -1,5 +1,5 @@
 <script>
-	let { svg } = $props();
+	let { svg, alt = '' } = $props();
 
 	const svgs = import.meta.glob(`/src/content/*/*/*.svg`, {
 		import: 'default',
@@ -18,7 +18,12 @@
 	const src = $derived(svg ? importSVG(svg) : null);
 </script>
 
-<div class="svg-container">
+<div
+	class="svg-container"
+	role={alt ? 'img' : undefined}
+	aria-label={alt || undefined}
+	aria-hidden={alt ? undefined : 'true'}
+>
 	{#if src}
 		{@html src}
 	{/if}

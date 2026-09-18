@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import Image from '$lib/components/Image.svelte';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 
@@ -22,11 +23,22 @@
 	function emblaPrev() {
 		emblaApi.scrollPrev();
 	}
+
+	function onKeydown(event) {
+		if (!emblaApi || event.defaultPrevented) return;
+		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+		if (event.target.closest?.('pre, input, textarea, select, [contenteditable]')) return;
+
+		if (event.key === 'ArrowLeft') emblaPrev();
+		else if (event.key === 'ArrowRight') emblaNext();
+	}
 </script>
+
+<svelte:window onkeydown={onKeydown} />
 
 <main>
 	<div class="head-1">
-		<a href="/projects" class="back"><span class="arrow">&lt;-</span>projects</a>
+		<a href="/projects" class="back"><Arrow glyph="<-" />projects</a>
 	</div>
 	<div class="head-2">
 		<div class="row">
@@ -34,12 +46,12 @@
 			<div class="links">
 				{#if metadata.website}
 					<a class="external" href={metadata.website} target="_blank">
-						site<span class="arrow">/></span>
+						site<Arrow glyph="/>" />
 					</a>
 				{/if}
 				{#if metadata.github}
 					<a class="external" href={metadata.github} target="_blank">
-						github<span class="arrow">/></span>
+						github<Arrow glyph="/>" />
 					</a>
 				{/if}
 			</div>
@@ -48,10 +60,23 @@
 			{metadata.description}
 		</p>
 	</div>
-	<div class="embla" use:emblaCarouselSvelte={{ options }} onemblaInit={emblaInit}>
+	<div
+		class="embla"
+		role="region"
+		aria-roledescription="carousel"
+		aria-label="{metadata.name} images"
+		use:emblaCarouselSvelte={{ options }}
+		onemblaInit={emblaInit}
+	>
 		<div class="embla__container" class:loop>
 			{#each metadata.images as image, index}
-				<div class="embla__slide" class:tall={metadata.aspect_ratio === 'tall'}>
+				<div
+					class="embla__slide"
+					class:tall={metadata.aspect_ratio === 'tall'}
+					role="group"
+					aria-roledescription="slide"
+					aria-label="{index + 1} of {metadata.images.length}"
+				>
 					<Image
 						{image}
 						alt={metadata.description}
@@ -62,8 +87,12 @@
 				</div>
 			{/each}
 		</div>
-		<button class="embla__prev" onclick={emblaPrev}><span>&lt;-</span></button>
-		<button class="embla__next" onclick={emblaNext}><span>-></span></button>
+		<button class="embla__prev" aria-label="previous image" onclick={emblaPrev}>
+			<span aria-hidden="true">&lt;-</span>
+		</button>
+		<button class="embla__next" aria-label="next image" onclick={emblaNext}>
+			<span aria-hidden="true">-></span>
+		</button>
 	</div>
 	<div class="content">
 		<Content />
@@ -171,7 +200,8 @@
 			border: 2px solid var(--bg-3);
 		}
 
-		&:hover span {
+		&:hover span,
+		&:focus-visible span {
 			opacity: 1;
 			transform: scale(1.2);
 		}

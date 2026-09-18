@@ -1,4 +1,5 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import '../app.css';
 	import '$lib/assets/fonts/space-mono.css';
 	import '$lib/assets/fonts/space-grotesk.css';
@@ -81,17 +82,21 @@
 	image={page.data.meta.image}
 />
 
-<header class:home={page.url.pathname === '/'} data-sveltekit-noscroll>
+<header
+	class:home={page.url.pathname === '/'}
+	inert={page.url.pathname === '/'}
+	data-sveltekit-noscroll
+>
 	<div class="row">
 		<a class="pfp" href="/" aria-label="homepage">
 			<LogoAnimated skipInitialAnimation={true} />
 		</a>
-		<a href="/"><h1>refact0r</h1></a>
+		<a class="name" href="/">refact0r</a>
 	</div>
 	<nav>
 		{#each pages as { name, path }}
 			<a class="nav" href={path}>
-				<span class="arrow">-></span><span class="slash">/</span>{name}
+				<Arrow /><span class="slash" aria-hidden="true">/</span>{name}
 			</a>
 		{/each}
 	</nav>
@@ -135,10 +140,13 @@
 				height: 2rem;
 			}
 
-			h1 {
+			.name {
+				font-family: 'Space Mono', monospace;
 				font-size: 1.375rem;
-				color: var(--txt);
-				margin: 0;
+				font-weight: 400;
+				line-height: 1.375;
+				font-variant-ligatures: no-common-ligatures;
+				letter-spacing: -2%;
 			}
 		}
 

@@ -1,10 +1,13 @@
 <script>
+	import Arrow from '$lib/components/Arrow.svelte';
 	import DiscordIcon from '~icons/ph/discord-logo';
 	import EmailIcon from '~icons/ph/envelope';
 	import CopyIcon from '~icons/ph/copy';
 	import CheckIcon from '~icons/ph/check';
 
 	let status = $state('submit ->');
+	let submitting = false;
+	let announcement = $state('');
 	let emailCopied = $state(false);
 	let discordCopied = $state(false);
 
@@ -16,37 +19,48 @@
 
 	const handleSubmit = async (data) => {
 		data.preventDefault();
+		if (submitting) return;
 
+		submitting = true;
 		status = 'submitting...';
 		const formData = new FormData(data.currentTarget);
 		const object = Object.fromEntries(formData);
 		object.access_key = 'e2076be5-0774-40df-b59a-4faead3fa269';
 		const json = JSON.stringify(object);
 
-		const response = await fetch('https://api.web3forms.com/submit', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json'
-			},
-			body: json
-		});
+		try {
+			const response = await fetch('https://api.web3forms.com/submit', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json'
+				},
+				body: json
+			});
 
-		const result = await response.json();
-		if (result.success) {
+			const result = await response.json();
+			if (!result.success) throw new Error(result.message);
 			status = 'message sent!';
+			announcement = 'message sent';
+		} catch {
+			status = 'failed to send. retry ->';
+			announcement = 'message failed to send. please try again.';
+		} finally {
+			submitting = false;
 		}
 	};
 
 	const copyEmail = async () => {
 		await navigator.clipboard.writeText(email);
 		emailCopied = true;
+		announcement = 'email copied';
 		setTimeout(() => (emailCopied = false), 1000);
 	};
 
 	const copyDiscord = async () => {
 		await navigator.clipboard.writeText('refact0r');
 		discordCopied = true;
+		announcement = 'discord username copied';
 		setTimeout(() => (discordCopied = false), 1000);
 	};
 </script>
@@ -55,9 +69,9 @@
 	<h1>contact</h1>
 	<p>ways to get in touch.</p>
 	<div class="info">
-		<EmailIcon />email <span class="sub">-></span>
+		<EmailIcon />email <span class="sub" aria-hidden="true">-></span>
 		<a href={email ? `mailto:${email}` : undefined} class="external"
-			>{email}<span class="arrow">/></span>
+			>{email}<Arrow glyph="/>" />
 		</a>
 		<button class="copy-btn" onclick={copyEmail} aria-label="Copy email">
 			{#if emailCopied}
@@ -68,9 +82,9 @@
 		</button>
 	</div>
 	<div class="info">
-		<DiscordIcon />discord <span class="sub">-></span>
+		<DiscordIcon />discord <span class="sub" aria-hidden="true">-></span>
 		<a href="https://discord.com/users/508863359777505290" class="external"
-			>refact0r<span class="arrow">/></span>
+			>refact0r<Arrow glyph="/>" />
 		</a>
 		<button class="copy-btn" onclick={copyDiscord} aria-label="Copy Discord username">
 			{#if discordCopied}
@@ -84,11 +98,23 @@
 	<br />
 	<h3>contact form</h3>
 	<form onsubmit={handleSubmit}>
-		<input type="text" name="name" placeholder="name" required />
-		<input type="email" name="email" placeholder="email (if you want a reply)" required />
-		<textarea name="message" placeholder="your message..." required rows="4"></textarea>
+		<input type="text" name="name" placeholder="name" aria-label="name" required />
+		<input
+			type="email"
+			name="email"
+			placeholder="email (if you want a reply)"
+			aria-label="email (if you want a reply)"
+		/>
+		<textarea
+			name="message"
+			placeholder="your message..."
+			aria-label="your message"
+			required
+			rows="4"
+		></textarea>
 		<button type="submit">{status}</button>
 	</form>
+	<p class="sr-only" role="status">{announcement}</p>
 </main>
 
 <style>
@@ -135,6 +161,11 @@
 		&:hover {
 			color: var(--txt-1);
 		}
+
+		&:focus-visible {
+			outline: 2px solid var(--txt-2);
+			outline-offset: 2px;
+		}
 	}
 
 	form {
@@ -146,7 +177,7 @@
 	input[type='text'],
 	input[type='email'],
 	textarea,
-	button {
+	button[type='submit'] {
 		background-color: transparent;
 		border: none;
 		padding: 1rem;
