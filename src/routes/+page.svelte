@@ -20,7 +20,7 @@
 				<LogoAnimated onAnimationComplete={handleLogoAnimationComplete} />
 			</div>
 		</div>
-		<p>hey there! i'm yifan. i care about how software works, learns, and feels.</p>
+		<p>hey there! i'm yifan. i like making things that are both functional and beautiful.</p>
 		<nav>
 			<a class="nav" href="/about">
 				<Arrow /><span class="slash" aria-hidden="true">/</span>about
