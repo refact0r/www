@@ -1,10 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import field from '$lib/assets/logo-field.webp?inline';
 
-	// The last animation to finish in each sequence: the lower trap pooling.
-	const FINAL_ANIMATION_NAME = 'logo-pool';
-	const COMPLETION_FALLBACK_MS = 2700;
+	// Runs on the rendered colour field for the length of each sequence; the ink itself is inside a mask.
+	const FINAL_ANIMATION_NAME = 'logo-clock';
+	const COMPLETION_FALLBACK_MS = 3000;
+	const LOOP_PAUSE_MS = 500;
 
 	let { skipInitialAnimation = false, onAnimationComplete } = $props();
 
@@ -52,7 +52,8 @@
 		// Only trigger if initial load is done
 		if (!initialLoadComplete) return;
 		isHovering = true;
-		if (!isAnimating) {
+		// Mid-pause the loop is already about to go again; let it finish resting
+		if (!isAnimating && !restartTimeout) {
 			isAnimating = true;
 		}
 	}
@@ -64,7 +65,6 @@
 
 	function handleAnimationEnd(event) {
 		if (event.animationName !== FINAL_ANIMATION_NAME) return;
-		if (!event.target.classList.contains('trap-low')) return;
 
 		if (!initialLoadComplete) {
 			completeInitialAnimation();
@@ -73,17 +73,13 @@
 
 		notifyAnimationComplete();
 
-		// After animation completes, check if still hovering
-		if (isHovering) {
-			// Restart animation by toggling the class
-			isAnimating = false;
-			clearTimeout(restartTimeout);
-			restartTimeout = setTimeout(() => {
-				isAnimating = true;
-			}, 0);
-		} else {
-			isAnimating = false;
-		}
+		// Rest on the finished mark, then go again if still hovering
+		isAnimating = false;
+		clearTimeout(restartTimeout);
+		restartTimeout = setTimeout(() => {
+			restartTimeout = undefined;
+			if (isHovering) isAnimating = true;
+		}, LOOP_PAUSE_MS);
 	}
 </script>
 
@@ -106,28 +102,95 @@
 	onanimationend={handleAnimationEnd}
 >
 	<defs>
-		<!-- One colour per stroke, blended through the knot -->
-		<pattern id="{id}-field" width="1000" height="1000" patternUnits="userSpaceOnUse">
-			<image href={field} width="1000" height="1000" preserveAspectRatio="none" />
-		</pattern>
+		<!-- The ink: white shapes that reveal the colour field. The field itself never moves -->
+		<mask id="{id}-ink" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+			<g fill="none" stroke="#fff" stroke-width="36">
+				<path class="stroke dot" pathLength="1" d="M346.3,327.78L385.68,396" />
+				<path class="stroke bar" pathLength="1" d="M212,453L788,453" />
+				<path class="stroke slash" pathLength="1" d="M705.7,237.71L375.7,809.29" />
+				<path class="stroke back" pathLength="1" d="M451.5,510L572.3,719.22" />
+			</g>
+			<g fill="#fff">
+				<path
+					class="trap trap-high"
+					d="M679.06,471C596.12,471 589.64,474.74 548.17,546.57L516.99,528.57C545.58,479.06 540.92,471 483.76,471L483.76,435C566.7,435 573.17,431.26 614.64,359.43L645.82,377.43C617.24,426.94 621.89,435 679.06,435Z"
+				/>
+				<path
+					class="trap trap-low"
+					d="M533.24,687.57C504.65,638.06 495.35,638.06 466.76,687.57L435.59,669.57C477.06,597.74 477.07,590.29 435.91,519L467.09,501C495.39,550.02 504.65,549.94 533.24,500.43L564.41,518.43C522.94,590.26 522.94,597.74 564.41,669.57Z"
+				/>
+			</g>
+		</mask>
+		<!-- the / in two halves, split between its two crossings: above (the bar) and below (the \) -->
+		<linearGradient
+			id="{id}-upper"
+			gradientUnits="userSpaceOnUse"
+			x1="555.7"
+			y1="497.5"
+			x2="515.7"
+			y2="566.8"
+		>
+			<stop offset="0" />
+			<stop offset="1" stop-opacity="0" />
+		</linearGradient>
+		<linearGradient
+			id="{id}-lower"
+			gradientUnits="userSpaceOnUse"
+			x1="555.7"
+			y1="497.5"
+			x2="515.7"
+			y2="566.8"
+		>
+			<stop offset="0" stop-opacity="0" />
+			<stop offset="1" />
+		</linearGradient>
+		<filter id="{id}-blend" filterUnits="userSpaceOnUse" x="136" y="163" width="728" height="721">
+			<feGaussianBlur stdDeviation="24" />
+		</filter>
 	</defs>
-	<g fill="none" stroke="url(#{id}-field)" stroke-width="36">
-		<path class="stroke dot" pathLength="1" d="M346.3,327.78L385.68,396" />
-		<path class="stroke bar" pathLength="1" d="M212,453L788,453" />
-		<path
-			class="trap trap-high"
-			fill="url(#{id}-field)"
-			stroke="none"
-			d="M679.06,471C596.12,471 589.64,474.74 548.17,546.57L516.99,528.57C545.58,479.06 540.92,471 483.76,471L483.76,435C566.7,435 573.17,431.26 614.64,359.43L645.82,377.43C617.24,426.94 621.89,435 679.06,435Z"
-		/>
-		<path class="stroke slash" pathLength="1" d="M705.7,237.71L375.7,809.29" />
-		<path
-			class="trap trap-low"
-			fill="url(#{id}-field)"
-			stroke="none"
-			d="M533.24,687.57C504.65,638.06 495.35,638.06 466.76,687.57L435.59,669.57C477.06,597.74 477.07,590.29 435.91,519L467.09,501C495.39,550.02 504.65,549.94 533.24,500.43L564.41,518.43C522.94,590.26 522.94,597.74 564.41,669.57Z"
-		/>
-		<path class="stroke back" pathLength="1" d="M451.5,510L572.3,719.22" />
+	<!--
+		The colour field: every point takes the colour of the stroke it is nearest to, so each
+		region widens away from the crossings. Blurred so the colours blend through the knot.
+	-->
+	<g class="field" mask="url(#{id}-ink)">
+		<g filter="url(#{id}-blend)">
+			<rect class="purple" width="1000" height="1000" />
+			<path
+				class="pink"
+				d="M299,-459L179,-251L182,-240L413,161L493,216L499,229L500,239L501,314L581,452L567,462L503,499L500,507L501,591L492,594L347,594L335,596L-266,942L764,1537L984,1156L980,1144L901,1006L500,766L499,599L506,594L650,594L660,590L582,452L1230,78Z"
+			/>
+			<path
+				class="blue"
+				d="M-100,846L332,596L340,589L364,552L388,530L412,513L436,500L468,489L484,490L500,499L580,453L660,589L668,596L732,634L740,644L748,741L980,1143L988,1153L1100,1153L1100,154L588,450L580,451L500,313L476,351L452,374L436,386L396,408L372,416L356,417L284,376L268,364L260,-103L180,-242L172,-247L-100,-247Z"
+			/>
+		</g>
+	</g>
+	<!--
+		While it is being written, a stroke is its own flat colour: solid copies are drawn over the
+		field in step with the ink, each new stroke on top of the ones before it. Once a stroke has
+		come through a crossing, the copies around that crossing fade out and let the blend in.
+	-->
+	<g fill="none" stroke-width="36">
+		<!-- around the upper crossing: the bar, then the / over it -->
+		<g class="solid solid-high">
+			<path class="stroke bar" pathLength="1" d="M212,453L788,453" />
+			<path
+				class="stroke slash"
+				stroke="url(#{id}-upper)"
+				pathLength="1"
+				d="M705.7,237.71L375.7,809.29"
+			/>
+		</g>
+		<!-- around the lower crossing: the /, then the \ over it -->
+		<g class="solid solid-low">
+			<path
+				class="stroke slash"
+				stroke="url(#{id}-lower)"
+				pathLength="1"
+				d="M705.7,237.71L375.7,809.29"
+			/>
+			<path class="stroke back" pathLength="1" d="M451.5,510L572.3,719.22" />
+		</g>
 	</g>
 </svg>
 
@@ -137,8 +200,12 @@
 		width: 100%;
 		height: 100%;
 
+		/* where on the timeline a sequence starts */
+		--t: 0s;
+
 		/* a quick attack and a soft landing for the pen */
 		--pen: cubic-bezier(0.25, 0.5, 0.4, 1);
+		/* a stroke leaving eases in and out evenly, so its last piece does not linger */
 		--lift: cubic-bezier(0.45, 0, 0.55, 1);
 		--settle: cubic-bezier(0.2, 0.7, 0.3, 1);
 	}
@@ -152,12 +219,29 @@
 		}
 	}
 
+	/* the dash pattern repeats every 3, so 3 is the resting 0: the offset never goes negative */
 	@keyframes -global-logo-lift {
 		from {
-			stroke-dashoffset: 0;
+			stroke-dashoffset: 3;
 		}
 		to {
-			stroke-dashoffset: -1.02;
+			stroke-dashoffset: 1.98;
+		}
+	}
+
+	@keyframes -global-logo-blend {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes -global-logo-clock {
+		from,
+		to {
+			opacity: 1;
 		}
 	}
 
@@ -180,17 +264,36 @@
 		}
 	}
 
-	@keyframes -global-logo-drain {
-		from {
-			transform: scale(1);
-		}
-		to {
-			transform: scale(0);
-		}
+	.blue {
+		fill: var(--blue);
+	}
+
+	.pink {
+		fill: var(--pink);
+	}
+
+	.purple {
+		fill: var(--purple);
 	}
 
 	.stroke {
 		stroke-dasharray: 1 2;
+	}
+
+	.solid {
+		opacity: 0;
+	}
+
+	.solid .bar {
+		stroke: var(--blue);
+	}
+
+	.solid .back {
+		stroke: var(--purple);
+	}
+
+	stop {
+		stop-color: var(--pink);
 	}
 
 	/* each trap grows out of its own crossing */
@@ -203,86 +306,76 @@
 	}
 
 	/*
-		Initial page load: written once, 1.55s. The hand doesn't stop between strokes: a quick tap
-		for the dot, straight into the bar, a beat before the long /, then the \ before the / has
-		landed.
+		One timeline, 3.84s: the strokes lift off in stroke order (0 to 1.6s), then are written again.
+		Hover plays all of it, exactly once. The initial page load starts 1.61s in, with everything
+		already lifted off, so it is written once in 2.23s.
 	*/
 	.writing {
-		.dot {
-			animation:
-				logo-write 0.15s var(--pen) 0.05s both,
-				logo-press 0.3s var(--settle) 0.05s;
-		}
-
-		.bar {
-			animation:
-				logo-write 0.36s var(--pen) 0.17s both,
-				logo-press 0.55s var(--settle) 0.17s;
-		}
-
-		.slash {
-			animation:
-				logo-write 0.42s var(--pen) 0.56s both,
-				logo-press 0.62s var(--settle) 0.56s;
-		}
-
-		.back {
-			animation:
-				logo-write 0.28s var(--pen) 0.86s both,
-				logo-press 0.45s var(--settle) 0.86s;
-		}
-
-		/* a trap starts to fill as the pen comes through the crossing */
-		.trap-high {
-			animation: logo-pool 0.6s var(--settle) 0.69s both;
-		}
-
-		.trap-low {
-			animation: logo-pool 0.6s var(--settle) 0.95s both;
-		}
+		--t: -1.61s;
 	}
 
-	/* Hover: lifted off in stroke order, then written again, 2.95s. Runs exactly once */
+	.writing,
 	.rewriting {
-		.dot {
-			animation:
-				logo-lift 0.14s var(--lift) 0.17s forwards,
-				logo-write 0.15s var(--pen) 1.43s forwards,
-				logo-press 0.3s var(--settle) 1.43s;
+		.field {
+			animation: logo-clock 3.84s var(--t);
 		}
 
-		.bar {
+		/*
+			Leaving: a trap is gone, and its crossing back to flat colour, exactly as the tail of the
+			first stroke to leave gets there (the bar at 0.5s, the / at 1.03s). Played in reverse, so
+			most of the change comes just before.
+			Arriving: a trap starts to fill, and its crossing to blend, as the pen comes through.
+		*/
+		.solid-high {
 			animation:
-				logo-lift 0.32s var(--lift) 0.36s forwards,
-				logo-write 0.36s var(--pen) 1.55s forwards,
-				logo-press 0.55s var(--settle) 1.55s;
+				logo-blend 0.44s var(--settle) calc(var(--t) + 0.06s) reverse forwards,
+				logo-blend 0.5s var(--settle) calc(var(--t) + 2.71s) forwards;
 		}
 
-		.slash {
+		.solid-low {
 			animation:
-				logo-lift 0.36s var(--lift) 0.73s forwards,
-				logo-write 0.42s var(--pen) 1.94s forwards,
-				logo-press 0.62s var(--settle) 1.94s;
+				logo-blend 0.44s var(--settle) calc(var(--t) + 0.59s) reverse forwards,
+				logo-blend 0.5s var(--settle) calc(var(--t) + 3.24s) forwards;
 		}
 
-		.back {
-			animation:
-				logo-lift 0.22s var(--lift) 1.12s forwards,
-				logo-write 0.28s var(--pen) 2.24s forwards,
-				logo-press 0.45s var(--settle) 2.24s;
-		}
-
-		/* each trap lets go before the tail of its first stroke gets there */
 		.trap-high {
 			animation:
-				logo-drain 0.41s var(--lift) forwards,
-				logo-pool 0.6s var(--settle) 2.07s forwards;
+				logo-pool 0.44s var(--settle) calc(var(--t) + 0.06s) reverse forwards,
+				logo-pool 0.6s var(--settle) calc(var(--t) + 2.71s) forwards;
 		}
 
 		.trap-low {
 			animation:
-				logo-drain 0.37s var(--lift) 0.48s forwards,
-				logo-pool 0.6s var(--settle) 2.33s forwards;
+				logo-pool 0.44s var(--settle) calc(var(--t) + 0.59s) reverse forwards,
+				logo-pool 0.6s var(--settle) calc(var(--t) + 3.24s) forwards;
+		}
+
+		.dot {
+			animation:
+				logo-lift 0.19s var(--lift) var(--t) forwards,
+				logo-write 0.17s var(--pen) calc(var(--t) + 1.69s) forwards,
+				logo-press 0.3s var(--settle) calc(var(--t) + 1.69s);
+		}
+
+		.bar {
+			animation:
+				logo-lift 0.43s var(--lift) calc(var(--t) + 0.25s) forwards,
+				logo-write 0.39s var(--pen) calc(var(--t) + 2s) forwards,
+				logo-press 0.58s var(--settle) calc(var(--t) + 2s);
+		}
+
+		.slash {
+			animation:
+				logo-lift 0.49s var(--lift) calc(var(--t) + 0.75s) forwards,
+				logo-write 0.44s var(--pen) calc(var(--t) + 2.53s) forwards,
+				logo-press 0.65s var(--settle) calc(var(--t) + 2.53s);
+		}
+
+		.back {
+			animation:
+				logo-lift 0.3s var(--lift) calc(var(--t) + 1.3s) forwards,
+				logo-write 0.29s var(--pen) calc(var(--t) + 3.11s) forwards,
+				logo-press 0.45s var(--settle) calc(var(--t) + 3.11s);
 		}
 	}
 </style>
