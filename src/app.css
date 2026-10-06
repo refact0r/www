@@ -17,6 +17,11 @@
 	box-sizing: border-box;
 }
 
+::selection {
+	background: var(--blue);
+	color: var(--bg);
+}
+
 @media (prefers-reduced-motion) {
 	* {
 		animation-delay: 0ms !important;
