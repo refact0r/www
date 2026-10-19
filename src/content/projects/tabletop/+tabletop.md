@@ -5,7 +5,7 @@ description: your shopping tabs, laid out on one table
 thumbnail: tabletop1.png
 images: [tabletop.png, tabletop1.png, tabletop2.png, tabletop3.png, tabletop4.png]
 github: https://github.com/refact0r/tabletop
-website: https://tabletop.refact0r.dev
+website: https://tabletop-shop.fly.dev/
 date: 2026-10-18
 ---
 
